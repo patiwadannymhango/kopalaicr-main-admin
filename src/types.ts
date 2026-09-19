@@ -14,6 +14,7 @@ export interface AdminUser {
   phone: string;
   is_staff: boolean;
   is_superuser: boolean;
+  is_active: boolean;
 }
 
 export interface Category {
@@ -103,6 +104,19 @@ export interface IndividualFilterOptions {
 export interface TeamFilterOptions {
   categories: Category[];
   relay_categories: string[];
+}
+
+export interface NotificationRecord {
+  id: string;
+  channel: 'EMAIL' | 'SMS';
+  notification_type: string;
+  recipient: string;
+  subject: string;
+  status: 'PENDING' | 'SENT' | 'FAILED';
+  error_message: string;
+  registration_number: string | null;
+  created_at: string;
+  sent_at: string | null;
 }
 
 export interface Withdrawal {

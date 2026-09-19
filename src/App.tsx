@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard';
 import IndividualRegistrations from './pages/IndividualRegistrations';
 import TeamRegistrations from './pages/TeamRegistrations';
 import Withdrawals from './pages/Withdrawals';
+import Notifications from './pages/Notifications';
+import AdminUsers from './pages/AdminUsers';
 import Profile from './pages/Profile';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -41,6 +43,8 @@ export default function App() {
               <Route path="/registrations/individual" element={<IndividualRegistrations />} />
               <Route path="/registrations/team" element={<TeamRegistrations />} />
               <Route path="/withdrawals" element={<Withdrawals />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/admin-users" element={<AdminUsers />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
           </Routes>

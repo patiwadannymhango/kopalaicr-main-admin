@@ -18,9 +18,12 @@ import DashboardIcon from '@mui/icons-material/DashboardRounded';
 import PeopleIcon from '@mui/icons-material/PeopleRounded';
 import GroupsIcon from '@mui/icons-material/GroupsRounded';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWalletRounded';
+import NotificationsIcon from '@mui/icons-material/NotificationsRounded';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettingsRounded';
 import BrandMark from './BrandMark';
 import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
 import OptionsMenu from './OptionsMenu';
+import { useAuth } from '../context/AuthContext';
 
 const DRAWER_WIDTH = 260;
 
@@ -29,11 +32,14 @@ const PAGE_TITLES: Record<string, string> = {
   '/registrations/individual': 'Individual registrations',
   '/registrations/team': 'Team registrations',
   '/withdrawals': 'Cash withdrawals',
+  '/notifications': 'Notifications',
+  '/admin-users': 'Admin users',
   '/profile': 'Profile',
 };
 
 export default function Layout() {
   const location = useLocation();
+  const { user } = useAuth();
   const pageTitle = PAGE_TITLES[location.pathname] || 'Dashboard';
 
   return (
@@ -105,6 +111,30 @@ export default function Layout() {
                   <ListItemText primary="Cash withdrawals" />
                 </ListItemButton>
               </ListItem>
+
+              <ListItem disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  component={NavLink}
+                  to="/notifications"
+                  selected={location.pathname === '/notifications'}
+                >
+                  <ListItemIcon><NotificationsIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Notifications" />
+                </ListItemButton>
+              </ListItem>
+
+              {user?.is_superuser && (
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    component={NavLink}
+                    to="/admin-users"
+                    selected={location.pathname === '/admin-users'}
+                  >
+                    <ListItemIcon><AdminPanelSettingsIcon fontSize="small" /></ListItemIcon>
+                    <ListItemText primary="Admin users" />
+                  </ListItemButton>
+                </ListItem>
+              )}
             </List>
           </Stack>
 
