@@ -20,7 +20,8 @@ import AddIcon from '@mui/icons-material/AddOutlined';
 import { getIndividualDashboard } from '../api/individual';
 import { getTeamDashboard } from '../api/team';
 import { createWithdrawal, listWithdrawals } from '../api/withdrawals';
-import type { DashboardStats, Withdrawal } from '../types';
+import { getWalletBalance, liveBalanceAmount } from '../api/wallet';
+import type { DashboardStats, WalletBalance, Withdrawal } from '../types';
 import { dateTime, money } from '../utils/format';
 
 type EntryType = 'INDIVIDUAL' | 'TEAM';
@@ -46,6 +47,8 @@ export default function Withdrawals() {
   const [busy, setBusy] = useState(false);
   const [formError, setFormError] = useState('');
 
+  const [wallet, setWallet] = useState<WalletBalance | null>(null);
+
   function load() {
     setLoading(true);
     setError('');
@@ -62,6 +65,12 @@ export default function Withdrawals() {
   }
 
   useEffect(load, [entryType]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // One merchant account for the whole event — not per entry type, so
+  // this loads once rather than on every tab switch.
+  useEffect(() => {
+    getWalletBalance().then(setWallet).catch(() => {});
+  }, []);
 
   function openForm() {
     setAmount('');
@@ -118,6 +127,20 @@ export default function Withdrawals() {
             <CardContent>
               <Typography variant="overline" color="text.secondary">Cash available</Typography>
               <Typography variant="h6" fontWeight={800} color="primary.main">{money(stats.cash_available)}</Typography>
+            </CardContent>
+          </Card>
+          <Card variant="outlined" sx={{ minWidth: 200, borderColor: 'success.main' }}>
+            <CardContent>
+              <Typography variant="overline" color="text.secondary">Live Lipila balance</Typography>
+              {liveBalanceAmount(wallet?.live_balance ?? null) !== null ? (
+                <Typography variant="h6" fontWeight={800} color="success.main">
+                  {money(liveBalanceAmount(wallet?.live_balance ?? null)!)}
+                </Typography>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  {wallet?.live_balance_error || 'Loading…'}
+                </Typography>
+              )}
             </CardContent>
           </Card>
         </Stack>

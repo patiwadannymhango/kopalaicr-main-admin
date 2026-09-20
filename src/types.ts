@@ -119,6 +119,14 @@ export interface NotificationRecord {
   sent_at: string | null;
 }
 
+export interface WalletBalance {
+  // Lipila's raw response, typically { success, message, data: { balance } } —
+  // see liveBalanceAmount() in api/wallet.ts. Shape isn't fully known
+  // until a real call succeeds, so this stays loose.
+  live_balance: Record<string, unknown> | null;
+  live_balance_error: string | null;
+}
+
 export interface Withdrawal {
   id: string;
   entry_type: 'INDIVIDUAL' | 'TEAM';
