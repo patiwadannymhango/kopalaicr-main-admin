@@ -44,7 +44,7 @@ function EntryTypeDashboard({ stats }: { stats: DashboardStats }) {
         <Grid item xs={12} sm={6} md={4}>
           <StatCard label="Pending / processing" value={String(pending)} />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        {/* <Grid item xs={12} sm={6} md={4}>
           <StatCard label="Revenue collected" value={money(stats.revenue_confirmed)} highlight />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
@@ -58,7 +58,7 @@ function EntryTypeDashboard({ stats }: { stats: DashboardStats }) {
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <StatCard label="Cash available" value={money(stats.cash_available)} />
-        </Grid>
+        </Grid> */}
       </Grid>
 
       <Card variant="outlined">
