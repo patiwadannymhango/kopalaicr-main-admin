@@ -4,7 +4,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { getIndividualDashboard } from '../api/individual';
 import { getTeamDashboard } from '../api/team';
 import type { DashboardStats } from '../types';
-import { money } from '../utils/format';
+// import { money } from '../utils/format';
 
 function StatCard({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
   return (
