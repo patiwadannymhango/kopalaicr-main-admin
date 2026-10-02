@@ -45,7 +45,6 @@ export interface IndividualRegistration {
   category: string;
   category_name: string;
   category_code: string;
-  t_shirt_size: string;
   division: string;
   town_or_city: string;
   club_or_institution: string;

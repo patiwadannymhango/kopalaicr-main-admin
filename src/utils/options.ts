@@ -9,8 +9,6 @@ export const GENDER_OPTIONS = [
 
 export const AGE_RANGE_OPTIONS = ['Under 18', '18-29', '30-39', '40-49', '50-59', '60+'];
 
-export const TSHIRT_SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL'];
-
 export const DIVISION_OPTIONS = [
   { value: 'mens-open', label: "Men's Open" },
   { value: 'womens-open', label: "Women's Open" },

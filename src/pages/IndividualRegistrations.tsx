@@ -33,14 +33,14 @@ import {
 } from '../api/individual';
 import type { IndividualFilterOptions, IndividualRegistration } from '../types';
 import { STATUS_COLORS, STATUS_OPTIONS } from '../types';
-import { AGE_RANGE_OPTIONS, DIVISION_OPTIONS, GENDER_OPTIONS, PAYMENT_METHOD_OPTIONS, TSHIRT_SIZE_OPTIONS } from '../utils/options';
+import { AGE_RANGE_OPTIONS, DIVISION_OPTIONS, GENDER_OPTIONS, PAYMENT_METHOD_OPTIONS } from '../utils/options';
 import { date, money } from '../utils/format';
 
 const PAGE_SIZE = 25;
 
 const emptyManualForm = {
   category_id: '', full_name: '', email: '', phone: '',
-  gender: '', age_range: '', country: '', t_shirt_size: '', division: '',
+  gender: '', age_range: '', country: '', division: '',
   town_or_city: '', club_or_institution: '', emergency_contact_name: '',
   emergency_contact_phone: '', medical_notes: '',
   status: 'CONFIRMED', payment_method: 'CASH',
@@ -357,15 +357,6 @@ export default function IndividualRegistrations() {
               <Grid item xs={12} sm={6}>
                 <TextField label="Country" value={manualForm.country} fullWidth size="small" placeholder="Zambia"
                   onChange={(e) => setManualForm({ ...manualForm, country: e.target.value })} />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select label="T-shirt size" value={manualForm.t_shirt_size} fullWidth size="small"
-                  onChange={(e) => setManualForm({ ...manualForm, t_shirt_size: e.target.value })}
-                >
-                  <MenuItem value="">—</MenuItem>
-                  {TSHIRT_SIZE_OPTIONS.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-                </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField

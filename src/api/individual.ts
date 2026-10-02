@@ -51,7 +51,6 @@ export interface IndividualUpdatePayload {
   gender?: string;
   age_range?: string;
   country?: string;
-  t_shirt_size?: string;
   division?: string;
   town_or_city?: string;
   club_or_institution?: string;
@@ -80,7 +79,6 @@ export interface IndividualCreatePayload {
   gender?: string;
   age_range?: string;
   country?: string;
-  t_shirt_size?: string;
   division?: string;
   town_or_city?: string;
   club_or_institution?: string;

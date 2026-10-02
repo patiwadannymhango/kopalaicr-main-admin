@@ -18,7 +18,7 @@ import {
 import { updateIndividualRegistration } from '../api/individual';
 import type { IndividualRegistration } from '../types';
 import { STATUS_OPTIONS } from '../types';
-import { AGE_RANGE_OPTIONS, DIVISION_OPTIONS, GENDER_OPTIONS, TSHIRT_SIZE_OPTIONS } from '../utils/options';
+import { AGE_RANGE_OPTIONS, DIVISION_OPTIONS, GENDER_OPTIONS } from '../utils/options';
 import { dateTime, money } from '../utils/format';
 
 interface EditableFields {
@@ -27,7 +27,6 @@ interface EditableFields {
   gender: string;
   age_range: string;
   country: string;
-  t_shirt_size: string;
   division: string;
   town_or_city: string;
   club_or_institution: string;
@@ -43,7 +42,6 @@ function fieldsFromRegistration(reg: IndividualRegistration): EditableFields {
     gender: reg.participant.gender,
     age_range: reg.participant.age_range,
     country: reg.participant.country,
-    t_shirt_size: reg.t_shirt_size,
     division: reg.division,
     town_or_city: reg.town_or_city,
     club_or_institution: reg.club_or_institution,
@@ -183,15 +181,6 @@ export default function IndividualDetailDialog({ registration, onClose, onSaved 
 
           <Typography variant="subtitle2" fontWeight={700}>Race details</Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                select label="T-shirt size" fullWidth size="small" value={fields.t_shirt_size}
-                onChange={(e) => updateField('t_shirt_size', e.target.value)}
-              >
-                <MenuItem value="">—</MenuItem>
-                {TSHIRT_SIZE_OPTIONS.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-              </TextField>
-            </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 select label="Division" fullWidth size="small" value={fields.division}
