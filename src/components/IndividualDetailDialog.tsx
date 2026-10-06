@@ -18,7 +18,7 @@ import {
 import { updateIndividualRegistration } from '../api/individual';
 import type { IndividualRegistration } from '../types';
 import { STATUS_OPTIONS } from '../types';
-import { AGE_RANGE_OPTIONS, DIVISION_OPTIONS, GENDER_OPTIONS } from '../utils/options';
+import { AGE_RANGE_OPTIONS, GENDER_OPTIONS } from '../utils/options';
 import { dateTime, money } from '../utils/format';
 
 interface EditableFields {
@@ -27,7 +27,6 @@ interface EditableFields {
   gender: string;
   age_range: string;
   country: string;
-  division: string;
   town_or_city: string;
   club_or_institution: string;
   emergency_contact_name: string;
@@ -42,7 +41,6 @@ function fieldsFromRegistration(reg: IndividualRegistration): EditableFields {
     gender: reg.participant.gender,
     age_range: reg.participant.age_range,
     country: reg.participant.country,
-    division: reg.division,
     town_or_city: reg.town_or_city,
     club_or_institution: reg.club_or_institution,
     emergency_contact_name: reg.emergency_contact_name,
@@ -181,15 +179,11 @@ export default function IndividualDetailDialog({ registration, onClose, onSaved 
 
           <Typography variant="subtitle2" fontWeight={700}>Race details</Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                select label="Division" fullWidth size="small" value={fields.division}
-                onChange={(e) => updateField('division', e.target.value)}
-              >
-                <MenuItem value="">—</MenuItem>
-                {DIVISION_OPTIONS.map((d) => <MenuItem key={d.value} value={d.value}>{d.label}</MenuItem>)}
-              </TextField>
-            </Grid>
+            {registration.batch_reference && (
+              <Grid item xs={12} sm={6}>
+                <ReadOnlyField label="Part of group" value={registration.batch_reference} />
+              </Grid>
+            )}
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Town / city" fullWidth size="small" value={fields.town_or_city}

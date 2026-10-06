@@ -33,14 +33,14 @@ import {
 } from '../api/individual';
 import type { IndividualFilterOptions, IndividualRegistration } from '../types';
 import { STATUS_COLORS, STATUS_OPTIONS } from '../types';
-import { AGE_RANGE_OPTIONS, DIVISION_OPTIONS, GENDER_OPTIONS, PAYMENT_METHOD_OPTIONS } from '../utils/options';
+import { AGE_RANGE_OPTIONS, GENDER_OPTIONS, PAYMENT_METHOD_OPTIONS } from '../utils/options';
 import { date, money } from '../utils/format';
 
 const PAGE_SIZE = 25;
 
 const emptyManualForm = {
   category_id: '', full_name: '', email: '', phone: '',
-  gender: '', age_range: '', country: '', division: '',
+  gender: '', age_range: '', country: '',
   town_or_city: '', club_or_institution: '', emergency_contact_name: '',
   emergency_contact_phone: '', medical_notes: '',
   status: 'CONFIRMED', payment_method: 'CASH',
@@ -170,7 +170,10 @@ export default function IndividualRegistrations() {
       valueGetter: (_value, row) => row.participant.phone,
     },
     { field: 'category_name', headerName: 'Category', width: 170 },
-    { field: 'division', headerName: 'Division', width: 120 },
+    {
+      field: 'batch_reference', headerName: 'Group', width: 120,
+      valueFormatter: (v) => v || '—',
+    },
     { field: 'amount', headerName: 'Amount', width: 110, valueFormatter: (v, row) => money(v as string, row.currency) },
     {
       field: 'status', headerName: 'Status', width: 170,
@@ -357,16 +360,6 @@ export default function IndividualRegistrations() {
               <Grid item xs={12} sm={6}>
                 <TextField label="Country" value={manualForm.country} fullWidth size="small" placeholder="Zambia"
                   onChange={(e) => setManualForm({ ...manualForm, country: e.target.value })} />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select label="Division" value={manualForm.division} fullWidth size="small"
-                  helperText="Only for 5KM/10KM/21KM individual races."
-                  onChange={(e) => setManualForm({ ...manualForm, division: e.target.value })}
-                >
-                  <MenuItem value="">—</MenuItem>
-                  {DIVISION_OPTIONS.map((d) => <MenuItem key={d.value} value={d.value}>{d.label}</MenuItem>)}
-                </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField label="Town / city" value={manualForm.town_or_city} fullWidth size="small"

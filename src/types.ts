@@ -45,7 +45,10 @@ export interface IndividualRegistration {
   category: string;
   category_name: string;
   category_code: string;
-  division: string;
+  /** Set when this registration was submitted as part of a group via the
+   * public "register multiple people" flow — the group's own reference
+   * (e.g. KICRG-00001), null for a standalone registration. */
+  batch_reference: string | null;
   town_or_city: string;
   club_or_institution: string;
   emergency_contact_name: string;
