@@ -28,7 +28,6 @@ interface EditableFields {
   captain_first_name: string;
   captain_last_name: string;
   captain_phone: string;
-  participant_count: string;
 }
 
 function fieldsFromTeam(team: TeamRegistration): EditableFields {
@@ -39,7 +38,6 @@ function fieldsFromTeam(team: TeamRegistration): EditableFields {
     captain_first_name: team.captain_first_name,
     captain_last_name: team.captain_last_name,
     captain_phone: team.captain_phone,
-    participant_count: team.participant_count != null ? String(team.participant_count) : '',
   };
 }
 
@@ -86,11 +84,7 @@ export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailD
     setBusy(true);
     setError('');
     try {
-      await updateTeamRegistration(team.id, {
-        ...fields,
-        participant_count: fields.participant_count ? Number(fields.participant_count) : null,
-        status,
-      });
+      await updateTeamRegistration(team.id, { ...fields, status });
       onSaved();
       onClose();
     } catch (err) {
@@ -177,12 +171,6 @@ export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailD
               <TextField
                 label="Phone" fullWidth size="small" value={fields.captain_phone}
                 onChange={(e) => updateField('captain_phone', e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Number of participants" type="number" fullWidth size="small" value={fields.participant_count}
-                onChange={(e) => updateField('participant_count', e.target.value)}
               />
             </Grid>
           </Grid>
