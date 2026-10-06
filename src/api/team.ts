@@ -42,6 +42,7 @@ export interface TeamUpdatePayload {
   captain_first_name?: string;
   captain_last_name?: string;
   captain_phone?: string;
+  participant_count?: number | null;
   status?: string;
 }
 
@@ -61,6 +62,7 @@ export interface TeamCreatePayload {
   captain_last_name: string;
   captain_email: string;
   captain_phone: string;
+  participant_count?: number | null;
   roster: { fullName: string; gender?: string }[];
   status?: string;
   payment_method?: string;
