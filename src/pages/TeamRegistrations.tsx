@@ -46,6 +46,7 @@ const DEFAULT_FREE_RUNNER_LIMIT = 8;
 const emptyManualForm = {
   team_name: '', company_or_institution: '', relay_category: 'mixed-team',
   captain_first_name: '', captain_last_name: '', captain_email: '', captain_phone: '',
+  participant_count: '',
   status: 'CONFIRMED', payment_method: 'CASH',
 };
 
@@ -168,6 +169,7 @@ export default function TeamRegistrations() {
     try {
       await createTeamRegistration({
         ...manualForm,
+        participant_count: manualForm.participant_count ? Number(manualForm.participant_count) : null,
         roster: roster.filter((r) => r.fullName.trim()).map((r) => ({ fullName: r.fullName, gender: r.gender })),
       });
       setNotice('Team registered.');
@@ -190,6 +192,7 @@ export default function TeamRegistrations() {
       valueGetter: (_value, row) => `${row.captain_first_name} ${row.captain_last_name}`,
     },
     { field: 'captain_phone', headerName: 'Captain phone', width: 140 },
+    { field: 'participant_count', headerName: 'Participants', width: 110, valueFormatter: (v) => v ?? '—' },
     {
       field: 'roster', headerName: 'Roster', width: 90,
       valueGetter: (_value, row) => `${row.roster.length}/${row.free_runner_limit}`,
@@ -349,6 +352,12 @@ export default function TeamRegistrations() {
               <Grid item xs={12} sm={6}>
                 <TextField label="Phone" value={manualForm.captain_phone} fullWidth size="small"
                   onChange={(e) => setManualForm({ ...manualForm, captain_phone: e.target.value })} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Number of participants" type="number" value={manualForm.participant_count} fullWidth size="small"
+                  onChange={(e) => setManualForm({ ...manualForm, participant_count: e.target.value })}
+                />
               </Grid>
             </Grid>
 
