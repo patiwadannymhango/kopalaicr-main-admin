@@ -103,7 +103,7 @@ export default function Withdrawals() {
 
       <Tabs value={entryType} onChange={(_e, v) => setEntryType(v)}>
         <Tab label="Individual" value="INDIVIDUAL" />
-        <Tab label="Team (Relay)" value="TEAM" />
+        <Tab label="Group (Relay)" value="TEAM" />
       </Tabs>
 
       {error && <Alert severity="error" onClose={() => setError('')}>{error}</Alert>}

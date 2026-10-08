@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import { updateTeamRegistration } from '../api/team';
-import type { TeamRegistration } from '../types';
+import type { Category, TeamRegistration } from '../types';
 import { STATUS_OPTIONS } from '../types';
 import { RELAY_CATEGORY_OPTIONS } from '../utils/options';
 import { dateTime, money } from '../utils/format';
@@ -52,11 +52,12 @@ function ReadOnlyField({ label, value }: { label: string; value: string | null }
 
 interface TeamDetailDialogProps {
   team: TeamRegistration | null;
+  categories: Category[];
   onClose: () => void;
   onSaved: () => void;
 }
 
-export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailDialogProps) {
+export default function TeamDetailDialog({ team, categories, onClose, onSaved }: TeamDetailDialogProps) {
   const [status, setStatus] = useState('');
   const [fields, setFields] = useState<EditableFields | null>(null);
   const [busy, setBusy] = useState(false);
@@ -71,6 +72,16 @@ export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailD
   }, [team]);
 
   if (!team || !fields) return null;
+
+  // relay_category is internal-only now (the public form no longer asks a
+  // group to pick one — real submissions all land as "mixed-team"), so it
+  // doesn't reflect anything the registrant chose. What they did choose is
+  // a race category per named runner — summarise that instead.
+  const categoryNameByCode = new Map(categories.map((c) => [c.code, c.name]));
+  const raceCategorySummary =
+    team.roster.length === 0
+      ? team.category_name || '—'
+      : [...new Set(team.roster.map((r) => categoryNameByCode.get(r.race_category) || r.race_category))].join(', ');
 
   function updateField<K extends keyof EditableFields>(key: K, value: EditableFields[K]) {
     setFields((prev) => (prev ? { ...prev, [key]: value } : prev));
@@ -100,7 +111,10 @@ export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailD
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 0.5 }}>
           <Grid container spacing={2}>
-            <Grid item xs={6} sm={3}><ReadOnlyField label="Category" value={team.category_name} /></Grid>
+            <Grid item xs={6} sm={3}>
+              <ReadOnlyField label="Participants" value={String(team.participant_count ?? team.roster.length)} />
+            </Grid>
+            <Grid item xs={6} sm={3}><ReadOnlyField label="Race categories" value={raceCategorySummary} /></Grid>
             <Grid item xs={6} sm={3}>
               <ReadOnlyField label="Amount" value={money(team.amount, team.currency)} />
             </Grid>
@@ -108,7 +122,7 @@ export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailD
               <ReadOnlyField label="Registered" value={dateTime(team.registered_at)} />
             </Grid>
             <Grid item xs={6} sm={3}>
-              <ReadOnlyField label="Roster limit" value={`${team.roster.length} / ${team.free_runner_limit}`} />
+              <ReadOnlyField label="Named roster" value={`${team.roster.length} / ${team.free_runner_limit}`} />
             </Grid>
           </Grid>
 
@@ -144,6 +158,9 @@ export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailD
               >
                 {RELAY_CATEGORY_OPTIONS.map((r) => <MenuItem key={r.value} value={r.value}>{r.label}</MenuItem>)}
               </TextField>
+              <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+                Internal grouping only — not asked on the public form.
+              </Typography>
             </Grid>
           </Grid>
 
@@ -187,7 +204,11 @@ export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailD
             {team.roster.length > 0 ? (
               <Stack spacing={0.5}>
                 {team.roster.map((runner) => {
-                  const details = [runner.race_category, runner.gender, runner.age_range].filter(Boolean).join(' · ');
+                  const details = [
+                    categoryNameByCode.get(runner.race_category) || runner.race_category,
+                    runner.gender,
+                    runner.age_range,
+                  ].filter(Boolean).join(' · ');
                   return (
                     <Typography key={runner.id} variant="body2">
                       {runner.full_name}{details ? ` (${details})` : ''}

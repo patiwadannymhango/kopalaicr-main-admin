@@ -30,7 +30,7 @@ const DRAWER_WIDTH = 260;
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dashboard',
   '/registrations/individual': 'Individual registrations',
-  '/registrations/team': 'Team registrations',
+  '/registrations/team': 'Group registrations',
   '/withdrawals': 'Cash withdrawals',
   '/notifications': 'Notifications',
   '/admin-users': 'Admin users',
@@ -97,7 +97,7 @@ export default function Layout() {
                   selected={location.pathname === '/registrations/team'}
                 >
                   <ListItemIcon><GroupsIcon fontSize="small" /></ListItemIcon>
-                  <ListItemText primary="Team (Relay)" />
+                  <ListItemText primary="Group (Relay)" />
                 </ListItemButton>
               </ListItem>
 

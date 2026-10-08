@@ -105,7 +105,7 @@ export default function Dashboard() {
 
       <Tabs value={tab} onChange={(_e, v) => setTab(v)}>
         <Tab label="Individual" value="individual" />
-        <Tab label="Team (Relay)" value="team" />
+        <Tab label="Group (Relay)" value="team" />
       </Tabs>
 
       {tab === 'individual' ? (
