@@ -61,7 +61,7 @@ export interface TeamCreatePayload {
   captain_last_name: string;
   captain_email: string;
   captain_phone: string;
-  roster: { fullName: string; gender?: string }[];
+  roster: { fullName: string; gender?: string; ageRange?: string; raceCategory: string }[];
   status?: string;
   payment_method?: string;
 }

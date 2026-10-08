@@ -33,7 +33,7 @@ import {
 } from '../api/team';
 import type { TeamFilterOptions, TeamRegistration } from '../types';
 import { STATUS_COLORS, STATUS_OPTIONS } from '../types';
-import { GENDER_OPTIONS, PAYMENT_METHOD_OPTIONS, RELAY_CATEGORY_OPTIONS } from '../utils/options';
+import { AGE_RANGE_OPTIONS, GENDER_OPTIONS, PAYMENT_METHOD_OPTIONS, RELAY_CATEGORY_OPTIONS } from '../utils/options';
 import { date, money } from '../utils/format';
 
 const PAGE_SIZE = 25;
@@ -52,6 +52,8 @@ const emptyManualForm = {
 interface RosterEntry {
   fullName: string;
   gender: string;
+  ageRange: string;
+  raceCategory: string;
 }
 
 export default function TeamRegistrations() {
@@ -71,6 +73,7 @@ export default function TeamRegistrations() {
 
   const [manualOpen, setManualOpen] = useState(false);
   const [manualBusy, setManualBusy] = useState(false);
+  const [manualError, setManualError] = useState('');
   const [manualForm, setManualForm] = useState(emptyManualForm);
   const [roster, setRoster] = useState<RosterEntry[]>([]);
 
@@ -147,11 +150,12 @@ export default function TeamRegistrations() {
   function openManualDialog() {
     setManualForm(emptyManualForm);
     setRoster([]);
+    setManualError('');
     setManualOpen(true);
   }
 
   function addRosterRow() {
-    setRoster((prev) => [...prev, { fullName: '', gender: '' }]);
+    setRoster((prev) => [...prev, { fullName: '', gender: '', ageRange: '', raceCategory: '' }]);
   }
 
   function updateRosterRow(index: number, patch: Partial<RosterEntry>) {
@@ -163,18 +167,28 @@ export default function TeamRegistrations() {
   }
 
   async function handleManualCreate() {
+    const namedRows = roster.filter((r) => r.fullName.trim());
+    if (namedRows.some((r) => !r.raceCategory)) {
+      setManualError('Every named runner needs a race category.');
+      return;
+    }
     setManualBusy(true);
-    setError('');
+    setManualError('');
     try {
       await createTeamRegistration({
         ...manualForm,
-        roster: roster.filter((r) => r.fullName.trim()).map((r) => ({ fullName: r.fullName, gender: r.gender })),
+        roster: namedRows.map((r) => ({
+          fullName: r.fullName,
+          gender: r.gender,
+          ageRange: r.ageRange || undefined,
+          raceCategory: r.raceCategory,
+        })),
       });
       setNotice('Team registered.');
       setManualOpen(false);
       load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to register team.');
+      setManualError(err instanceof Error ? err.message : 'Failed to register team.');
     } finally {
       setManualBusy(false);
     }
@@ -373,11 +387,25 @@ export default function TeamRegistrations() {
                     onChange={(e) => updateRosterRow(index, { fullName: e.target.value })}
                   />
                   <TextField
-                    select label="Gender" value={entry.gender} size="small" sx={{ minWidth: 140 }}
+                    select label="Race category" required value={entry.raceCategory} size="small" sx={{ minWidth: 200 }}
+                    onChange={(e) => updateRosterRow(index, { raceCategory: e.target.value })}
+                  >
+                    <MenuItem value="">—</MenuItem>
+                    {(filters?.categories ?? []).map((c) => <MenuItem key={c.code} value={c.code}>{c.name}</MenuItem>)}
+                  </TextField>
+                  <TextField
+                    select label="Gender" value={entry.gender} size="small" sx={{ minWidth: 120 }}
                     onChange={(e) => updateRosterRow(index, { gender: e.target.value })}
                   >
                     <MenuItem value="">—</MenuItem>
                     {GENDER_OPTIONS.map((g) => <MenuItem key={g.value} value={g.value}>{g.label}</MenuItem>)}
+                  </TextField>
+                  <TextField
+                    select label="Age range" value={entry.ageRange} size="small" sx={{ minWidth: 130 }}
+                    onChange={(e) => updateRosterRow(index, { ageRange: e.target.value })}
+                  >
+                    <MenuItem value="">—</MenuItem>
+                    {AGE_RANGE_OPTIONS.map((a) => <MenuItem key={a} value={a}>{a}</MenuItem>)}
                   </TextField>
                   <IconButton size="small" onClick={() => removeRosterRow(index)}>
                     <CloseIcon fontSize="small" />
@@ -388,6 +416,8 @@ export default function TeamRegistrations() {
                 <Typography variant="body2" color="text.secondary">No runners added yet.</Typography>
               )}
             </Stack>
+
+            {manualError && <Alert severity="error" onClose={() => setManualError('')}>{manualError}</Alert>}
           </Stack>
         </DialogContent>
         <DialogActions>
@@ -395,15 +425,7 @@ export default function TeamRegistrations() {
           <Button
             variant="contained"
             onClick={handleManualCreate}
-            disabled={
-              manualBusy ||
-              !manualForm.team_name ||
-              !manualForm.company_or_institution ||
-              !manualForm.captain_first_name ||
-              !manualForm.captain_last_name ||
-              !manualForm.captain_email ||
-              !manualForm.captain_phone
-            }
+            disabled={manualBusy || !manualForm.team_name || !manualForm.company_or_institution}
           >
             {manualBusy ? 'Saving…' : 'Register team'}
           </Button>

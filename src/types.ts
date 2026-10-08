@@ -62,6 +62,8 @@ export interface RosterRunner {
   id: string;
   full_name: string;
   gender: string;
+  age_range: string;
+  race_category: string;
 }
 
 export interface TeamRegistration {
@@ -79,8 +81,8 @@ export interface TeamRegistration {
   captain_phone: string;
   free_runner_limit: number;
   roster: RosterRunner[];
-  category: string;
-  category_name: string;
+  category: string | null;
+  category_name: string | null;
   registered_at: string;
   updated_at: string;
 }

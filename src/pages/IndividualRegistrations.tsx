@@ -66,6 +66,7 @@ export default function IndividualRegistrations() {
 
   const [manualOpen, setManualOpen] = useState(false);
   const [manualBusy, setManualBusy] = useState(false);
+  const [manualError, setManualError] = useState('');
   const [manualForm, setManualForm] = useState(emptyManualForm);
 
   const [deleteTarget, setDeleteTarget] = useState<IndividualRegistration | null>(null);
@@ -141,7 +142,7 @@ export default function IndividualRegistrations() {
 
   async function handleManualCreate() {
     setManualBusy(true);
-    setError('');
+    setManualError('');
     try {
       await createIndividualRegistration(manualForm);
       setNotice('Person registered.');
@@ -149,7 +150,7 @@ export default function IndividualRegistrations() {
       setManualForm(emptyManualForm);
       load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to register participant.');
+      setManualError(err instanceof Error ? err.message : 'Failed to register participant.');
     } finally {
       setManualBusy(false);
     }
@@ -203,7 +204,7 @@ export default function IndividualRegistrations() {
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="h5" fontWeight={800}>Individual registrations</Typography>
         <Stack direction="row" spacing={1}>
-          <Button startIcon={<AddIcon />} variant="outlined" onClick={() => setManualOpen(true)}>
+          <Button startIcon={<AddIcon />} variant="outlined" onClick={() => { setManualError(''); setManualOpen(true); }}>
             Add person
           </Button>
           <Button startIcon={<UploadFileIcon />} variant="outlined" onClick={() => setBulkUploadOpen(true)}>
@@ -382,6 +383,8 @@ export default function IndividualRegistrations() {
                   onChange={(e) => setManualForm({ ...manualForm, medical_notes: e.target.value })} />
               </Grid>
             </Grid>
+
+            {manualError && <Alert severity="error" onClose={() => setManualError('')}>{manualError}</Alert>}
           </Stack>
         </DialogContent>
         <DialogActions>

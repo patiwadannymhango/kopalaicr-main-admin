@@ -41,7 +41,7 @@ function fieldsFromTeam(team: TeamRegistration): EditableFields {
   };
 }
 
-function ReadOnlyField({ label, value }: { label: string; value: string }) {
+function ReadOnlyField({ label, value }: { label: string; value: string | null }) {
   return (
     <Box>
       <Typography variant="caption" color="text.secondary" display="block">{label}</Typography>
@@ -186,11 +186,14 @@ export default function TeamDetailDialog({ team, onClose, onSaved }: TeamDetailD
             </Typography>
             {team.roster.length > 0 ? (
               <Stack spacing={0.5}>
-                {team.roster.map((runner) => (
-                  <Typography key={runner.id} variant="body2">
-                    {runner.full_name}{runner.gender ? ` (${runner.gender})` : ''}
-                  </Typography>
-                ))}
+                {team.roster.map((runner) => {
+                  const details = [runner.race_category, runner.gender, runner.age_range].filter(Boolean).join(' · ');
+                  return (
+                    <Typography key={runner.id} variant="body2">
+                      {runner.full_name}{details ? ` (${details})` : ''}
+                    </Typography>
+                  );
+                })}
               </Stack>
             ) : (
               <Typography variant="body2" color="text.secondary">No roster submitted.</Typography>

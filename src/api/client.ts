@@ -49,6 +49,25 @@ async function refreshAccessToken(): Promise<boolean> {
   return true;
 }
 
+// DRF validation errors nest arbitrarily — a many=True/nested-serializer
+// field (like a roster) comes back as {"0": {"raceCategory": ["..."]}, ...}
+// rather than a flat string, so a naive .join(' ') on the value renders
+// "[object Object]". Recurse through strings/arrays/objects to build a
+// readable "row 1: raceCategory: ..." style message instead.
+function formatDrfErrorValue(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) return value.map(formatDrfErrorValue).join(' ');
+  if (value && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([key, v]) => {
+        const label = /^\d+$/.test(key) ? `row ${Number(key) + 1}` : key;
+        return `${label}: ${formatDrfErrorValue(v)}`;
+      })
+      .join('; ');
+  }
+  return String(value);
+}
+
 interface RequestOptions {
   method?: string;
   body?: unknown;
@@ -92,7 +111,7 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     const fieldErrors =
       errorBody && typeof errorBody === 'object' && !Array.isArray(errorBody)
         ? Object.entries(errorBody)
-            .map(([field, value]) => `${field}: ${Array.isArray(value) ? value.join(' ') : value}`)
+            .map(([field, value]) => `${field}: ${formatDrfErrorValue(value)}`)
             .join(' ')
         : null;
     throw new Error(
